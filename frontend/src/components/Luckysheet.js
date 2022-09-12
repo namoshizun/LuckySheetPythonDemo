@@ -12,7 +12,7 @@ class Luckysheet extends React.Component {
         if (this.luckysheet)
             return
 
-        const luckysheet = window.luckysheet;
+        const luckysheet = window.luckysheet
         const wsProtocol = {
             "http:": "ws",
             "https:": "wss",

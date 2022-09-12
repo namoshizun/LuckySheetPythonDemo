@@ -5,7 +5,12 @@ services:
   redis:
     image: redis
     container_name: "redis_db"
-    command: redis-server --requirepass password
+    # --------------------------------------------------------
+    # NOTE: must not enable password auth because broadcaster does
+    # not yet support that. See MR #79
+    # command: redis-server --requirepass __password__
+    # --------------------------------------------------------
+    command: redis-server
     ports:
       - "6380:6379"
     networks:
@@ -14,12 +19,12 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: 'colabdict-api'
-    command: ['npm', 'start']
+    container_name: "colabdict-api"
+    command: ["bash", "-c", "./run.sh"]
     volumes:
-      - ./frontend:/code
+      - ./backend:/code
     ports:
-      - 3000:3000
+      - 8080:8080
     networks:
       - colabdict
     env_file:
@@ -28,10 +33,10 @@ services:
   frontend:
     build:
       context: ./frontend
-    container_name: 'colabdict-ui'
-    command: ['npm', 'start']
+    container_name: "colabdict-ui"
+    command: ["npm", "start"]
     volumes:
-      - ./frontend:/code
+      - ./frontend/src:/code/src
     ports:
       - 3000:3000
     networks:

@@ -1,12 +1,10 @@
 import contextlib
 import json
 import zlib
-import uuid
 from datetime import datetime
 from typing import Any, AsyncGenerator
 from functools import wraps
 from urllib.parse import unquote
-from datetime import datetime
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from .message import Message
@@ -80,8 +78,8 @@ class LuckysheetSession:
             **self.__get_metadata(),
             **{
                 'status': StatusCode.ok,
-                'data': data,
-                'type': ReplyType.notify_selection
+                'data': json.dumps(data),
+                'type': ReplyType.broadcast
             }
         )
         payload.update(kwargs)
@@ -100,4 +98,3 @@ class LuckysheetSession:
 
     def __str__(self) -> str:
         return f'uuid {self.id}, connected at {self.connect_time}'
-

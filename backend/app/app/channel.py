@@ -1,6 +1,7 @@
 import typing
 import functools
 import anyio
+import os
 
 from starlette.websockets import WebSocket
 from starlette.routing import WebSocketRoute
@@ -8,7 +9,14 @@ from broadcaster import Broadcast
 from .session import LuckysheetSession, ReplyType
 
 
-broadcast = Broadcast("redis://:password@localhost:6379")
+_env = os.environ
+
+if password := _env.get('REDIS_PASSWORD'):
+    redis_url = f"redis://:{password}@{_env['REDIS_HOST']}:{_env['REDIS_PORT']}"
+else:
+    redis_url = f"redis://{_env['REDIS_HOST']}:{_env['REDIS_PORT']}"
+
+broadcast = Broadcast(redis_url)
 
 
 async def __run_until_first_complete(*args: typing.Tuple[typing.Callable, dict]) -> None:
@@ -64,7 +72,6 @@ async def _message_broadcaster(session: LuckysheetSession):
 
             if session.id not in message:
                 await session.websocket.send_text(message)
-                print(f'[broadcast-{session.id}]: {type(message)} = {message}')
 
 
 routes = [
