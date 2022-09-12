@@ -1,0 +1,44 @@
+version: "3.5"
+
+services:
+
+  redis:
+    image: redis
+    container_name: "redis_db"
+    command: redis-server --requirepass password
+    ports:
+      - "6380:6379"
+    networks:
+      - colabdict
+
+  backend:
+    build:
+      context: ./backend
+    container_name: 'colabdict-api'
+    command: ['npm', 'start']
+    volumes:
+      - ./frontend:/code
+    ports:
+      - 3000:3000
+    networks:
+      - colabdict
+    env_file:
+      - .env
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: 'colabdict-ui'
+    command: ['npm', 'start']
+    volumes:
+      - ./frontend:/code
+    ports:
+      - 3000:3000
+    networks:
+      - colabdict
+    env_file:
+      - .env
+
+networks:
+  colabdict:
+    name: colabdict-network

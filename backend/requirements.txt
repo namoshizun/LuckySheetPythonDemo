@@ -1,0 +1,12 @@
+uvicorn
+fastapi
+python-multipart
+requests
+pydantic
+psycopg2
+alembic
+sqlalchemy
+pytest
+python-jose
+websockets
+broadcaster[redis]==0.2.0
